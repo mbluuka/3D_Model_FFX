@@ -2,17 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/lib.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SaveFile.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/diagrams/File_Saving.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/diagrams/Main_Stage.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/diagrams/Shape_Classes.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/diagrams/Task_Delegation.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/cs2450-hw4/sample/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs2450-hw4/sample/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -130,6 +121,9 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="735" />
     <option name="y" value="402" />
@@ -185,7 +179,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Помощь/2/javafx-sdk-17.0.2/lib&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Mrwar/Documents/GitHub/Draw3D&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
@@ -292,6 +286,14 @@
       <workItem from="1576443619060" duration="1855000" />
       <workItem from="1576473961126" duration="3557000" />
       <workItem from="1653414475449" duration="1697000" />
+      <workItem from="1653416336550" duration="620000" />
+      <workItem from="1653546316074" duration="24000" />
+      <workItem from="1653719122950" duration="7915000" />
+      <workItem from="1653751036563" duration="16342000" />
+      <workItem from="1653842863314" duration="966000" />
+      <workItem from="1653850226669" duration="177000" />
+      <workItem from="1653850428370" duration="5859000" />
+      <workItem from="1653901168384" duration="5701000" />
     </task>
     <servers />
   </component>
@@ -362,6 +364,16 @@
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.reflect.InvocationTargetException" package="java.lang.reflect" />
+          <option name="timeStamp" value="4" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />

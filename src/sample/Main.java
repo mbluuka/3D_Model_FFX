@@ -1,21 +1,16 @@
 /*
-    Class: MainStage
-    Contains main method and the primary stage for the application.
-    TODO
-    make things look pretty
+    Добро пожаловать в код приложения по построению 3D фигур, а также последующая работа с ними
+    TODO Фигуры
+    Тор, эллипс, плоскость, отрезок
+
+    TODO Выбор нескольких фигур и функционал для них, как для соло фигуры
 */
 
 package sample;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
@@ -28,35 +23,34 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.Shape3D;
-import javafx.scene.shape.Sphere;
+import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.util.converter.DoubleStringConverter;
 
 public class Main extends Application {
 
-    // main layout container for the main stage
+    // Основной слой
     private BorderPane borderPane;
 
-    // control box in the right side for shape transformations inside the subscene.
-    // Shape transformations include: Rotate, Translate, Scale, and Change Colour.
+    // Боковая панель, имеющая функционал по редактированию параметров фигуры
     private VBox controlBox;
-    private Label controlBoxLabel, rotateXLabel, rotateYLabel, rotateZLabel, translateXLabel, translateYLabel, translateZLabel, scaleLabel, changeBgColorLabel, changeColorLabel;
+    private Label controlBoxLabel,
+            rotateXLabel, rotateYLabel, rotateZLabel,
+            translateXLabel, translateYLabel, translateZLabel,
+            scaleLabel, changeBgColorLabel, changeColorLabel;
+
     private Slider rotateSliderX, rotateSliderY, rotateSliderZ;
     private TextField translateXTextField, translateYTextField, translateZTextField;
-    private Button translateButton; // once this is clicked, it gets the values of the text fields
+    private Button translateButton, deleteButton;
     private Slider scaleSlider;
     final ColorPicker colorPicker = new ColorPicker();
     final ColorPicker bgColorPicker = new ColorPicker();
+    private TextField xcoordsTF, ycoordsTF, zcoordsTF;
 
-    // SubScene that has the shapes inside in 3D
+    // Подсцена, в которую мы будем добавлять фигуры
     private Pane pane;
     private SubScene subScene;
     private double subSceneWidth;
@@ -64,24 +58,22 @@ public class Main extends Application {
     private Group shapesGroup;
     private PerspectiveCamera camera;
 
-    // Menu bar that contains "file" menu
+    // Сама кнопка меню
     private MenuBar menuBar;
 
-    // "file" menu that contains menu items, "save" and "open"
+    // Вызов меню с параметрами
     private Menu fileMenu;
 
     private MenuItem saveMenuItem;
     private MenuItem openMenuItem;
 
-    // Button to add the shape into the sub-scene
+    // Кнопка для добавления фигуры
     private Button addShapeButton;
 
-    // Shape attributes
+    // Переменные фигур
     private double width, height, depth, radius;
-    private Shape3D selectedShape; // this is the selected shape
-    private Material selectedShapeMaterial; // this is the selected shape's material
-
-    private Shape3D[] shapeList;
+    private Shape3D selectedShape; // Метка выбранной фигуры
+    private Material selectedShapeMaterial; // Цвет выбранной фигуры
 
     public static void main(String[] args)
     {
@@ -89,27 +81,32 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
 
-        /***************** Defining the variables *****************/
+        /***************** Определение переменных *****************/
 
-        // layout that is the root of everything else
+        // Макет/слой, который является фундаментом всего что тут только есть
         borderPane = new BorderPane();
 
         // ShapeEditor and its labels
-        controlBox = new VBox(20);
-        controlBoxLabel = new Label("Делатель фигурок 2000");
-        rotateXLabel = new Label("Двигать по оси X: ");
-        rotateYLabel = new Label("Двигать по оси Y: ");
-        rotateZLabel = new Label("Двигать по оси Z: ");
-        translateXLabel = new Label("Translate X: ");
-        translateYLabel = new Label("Translate Y: ");
-        translateZLabel = new Label("Translate Z: ");
-        scaleLabel = new Label("Изменить размер: ");
+        controlBox = new VBox(15);
+        controlBoxLabel = new Label("Делатель фигурок 2000"); // Название
+
+        // Метка "вращателей"
+        rotateXLabel = new Label("Вращать по оси X: ");
+        rotateYLabel = new Label("Вращать по оси Y: ");
+        rotateZLabel = new Label("Вращать по оси Z: ");
+
+        // Метка "перемещателей"
+        translateXLabel = new Label("Переместить по X: ");
+        translateYLabel = new Label("Переместить по Y: ");
+        translateZLabel = new Label("Переместить по Z: ");
+
+        scaleLabel = new Label("Изменить размер: "); // Метка изменения размера
         changeColorLabel = new Label("Изменить цвет фигуры: ");
         changeBgColorLabel = new Label("Изменить цвет фона: ");
 
-        // Sliders
+        // Ползунки
         rotateSliderX = new Slider(0, 360, 180);
         rotateSliderY = new Slider(0, 360, 180);
         rotateSliderZ = new Slider(0, 360, 180);
@@ -124,98 +121,115 @@ public class Main extends Application {
         translateXTextField = new TextField();
         translateYTextField = new TextField();
         translateZTextField = new TextField();
-        translateButton = new Button("Переместить");
 
+        xcoordsTF = new TextField();
+        xcoordsTF.setEditable(false);
+
+        ycoordsTF = new TextField();
+        ycoordsTF.setEditable(false);
+
+        zcoordsTF = new TextField();
+        zcoordsTF.setEditable(false);
+
+        translateButton = new Button("Переместить");
+        deleteButton = new Button("Удалить");
+
+        // Устанавливаем задний фон боковой панели
         controlBox.setStyle("-fx-background-color: lightsteelblue");
-        controlBox.setPadding(new Insets(35, 25, 20, 25));
+        controlBox.setPadding(new Insets(30, 20, 15, 20));
 
         disableControls(true);
 
-        // sub-scene that contains the shapes (original: 800, 600)
+        // Подсцена, содержащая фигуры (Оригинальный масштаб подсценки: 800, 600)
         pane = new Pane();
         shapesGroup = new Group();
-        subScene = new SubScene(pane, subSceneWidth = 700, subSceneHeight = 500);
+        subScene = new SubScene(pane, subSceneWidth = 750, subSceneHeight = 550);
         camera = new PerspectiveCamera();
         camera.getTransforms().add(new Translate(0, 0, 0));
 
         pane.getChildren().add(shapesGroup);
         subScene.setCamera(camera);
 
-        /********* Set the input detection for the translate text fields **********/
+        /********* Устанавливаем определение ввода для полей с перемещалкой **********/
         setTextFieldDoubleOnly(translateXTextField);
         setTextFieldDoubleOnly(translateYTextField);
         setTextFieldDoubleOnly(translateZTextField);
 
 
-        /********* Set the Style and the style changer for the pane/background of subscene *********/
-        pane.setStyle("-fx-border-style: solid; -fx-border-width: 2px; -fx-border-color: lightgray; -fx-background-color: white");
+        /********* Стиль для основного окна и под окна *********/
+        pane.setStyle("-fx-border-style: solid; -fx-border-width: 2px;" +
+                " -fx-border-color: lightgray; -fx-background-color: white");
 
         bgColorPicker.setOnAction(e -> {
-            pane.setStyle("-fx-border-style: solid; -fx-border-width: 2px; -fx-border-color: lightgray; -fx-background-color: #" + colorToHex(bgColorPicker.getValue()));
-            System.out.println("Foo");
+            pane.setStyle("-fx-border-style: solid; -fx-border-width: 2px;" +
+                    " -fx-border-color: lightgray; -fx-background-color: #" + colorToHex(bgColorPicker.getValue()));
+            System.out.println("Background is change");
         });
 
-        // menu bar and its items
+        // Менюшка и её кнопочки
         menuBar = new MenuBar();
-        fileMenu = new Menu("File");
-        saveMenuItem = new MenuItem("Save");
-        openMenuItem = new MenuItem("Open");
+        fileMenu = new Menu("Файл");
+        saveMenuItem = new MenuItem("Сохранить");
+        openMenuItem = new MenuItem("Открыть");
 
         saveMenuItem.setOnAction(event->{
-        	save(primaryStage);
+        	save();
         });
 
         openMenuItem.setOnAction(event->{
-            load(primaryStage);
+            load();
         });
 
-        /***************** Add the button that adds shapes into the sub-scene *****************/
+        /***************** Добавляем кнопку, которая будет вызывать функцию для построения фигуры *****************/
         addShapeButton = new Button("Добавить фигуру");
         addShapeButton.setStyle("-fx-pref-width: 500; -fx-pref-height: 30; -fx-font-size: 20; -fx-border-radius: 5");
 
         addShapeButton.setOnAction(e -> {
             showForm();
         });
+
         HBox buttonBox = new HBox(addShapeButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets( 50, 0, 50, 0));
 
-        /***************** Adding Controls to control box *****************/
+        /***************** Добавление блока с визуализацией данными *****************/
         controlBox.getChildren().add(controlBoxLabel);
-        controlBox.getChildren().addAll(new HBox(40, rotateXLabel, rotateSliderX),
-                new HBox(40, rotateYLabel, rotateSliderY),
-                new HBox(40, rotateZLabel, rotateSliderZ),
+        controlBox.getChildren().addAll(
+                new HBox(30, rotateXLabel, rotateSliderX),
+                new HBox(30, rotateYLabel, rotateSliderY),
+                new HBox(30, rotateZLabel, rotateSliderZ),
                 new HBox(25, translateXLabel, translateXTextField),
                 new HBox(25, translateYLabel, translateYTextField),
                 new HBox(25, translateZLabel, translateZTextField),
-                new HBox(25, translateButton),
-                new HBox(10, scaleLabel, scaleSlider),
-                new HBox(5, changeColorLabel, colorPicker),
-                new HBox(5, changeBgColorLabel, bgColorPicker));
+                new HBox(20, translateButton, deleteButton),
+                new HBox(20, scaleLabel, scaleSlider),
+                new HBox(10, changeColorLabel, colorPicker),
+                new HBox(10, changeBgColorLabel, bgColorPicker)
+                );
 
-        controlBox.setMargin(controlBoxLabel, new Insets(0, 0, 15, 0));
-        controlBox.setSpacing(15);
+        controlBox.setMargin(controlBoxLabel, new Insets(0, 0, 10, 0));
+        controlBox.setSpacing(10);
         controlBox.setAlignment(Pos.TOP_CENTER);
         controlBoxLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold");
 
-        /***************** Adding menu items where they belong *****************/
+        /***************** Добавление меню *****************/
         menuBar.getMenus().add(fileMenu);
         fileMenu.getItems().addAll(saveMenuItem,openMenuItem);
 
-        /***************** Adding sub-scene, button, and control box to the grid-pane *****************/
-        borderPane.setCenter(subScene);
-        borderPane.setBottom(buttonBox);
-        borderPane.setRight(controlBox);
-        borderPane.setTop(menuBar);
+        /***************** Добавление подсцены, кнопок и боковой панели *****************/
+        borderPane.setCenter(subScene); // что по центру
+        borderPane.setBottom(buttonBox); // что внизу
+        borderPane.setRight(controlBox); // что справа
+        borderPane.setTop(menuBar); // что сверху
 
         borderPane.setMargin(borderPane.getTop(), new Insets(0, 0, 40, 0));
         borderPane.setMargin(borderPane.getCenter(), new Insets(0, 15, 10, 40));
         borderPane.setMargin(borderPane.getRight(), new Insets(0, 40, 10, 15));
         borderPane.setStyle("-fx-background-color: whitesmoke");
 
-        /********** Controls for the Selected Shape Transformations **********/
+        /********** Контроллеры для изменения выбранной фигуры **********/
 
-        // rotate sliders
+        // Слайдеры для изменения позиции фигуры
         rotateSliderX.valueProperty().addListener((observable, oldValue, newValue) -> { // TODO reset the sliders
             if(selectedShape == null)
                 return;
@@ -232,15 +246,23 @@ public class Main extends Application {
             selectedShape.getTransforms().addAll(new Rotate(((Double) newValue) - ((Double) oldValue), Rotate.Z_AXIS));
         });
 
-        // Scale Slider
+        // Ползунок для изменения масштаба фигуры
         scaleSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (selectedShape == null)
                 return;
             scale(selectedShape, ((Double) newValue) - ((Double) oldValue));
         });
 
+        // Фунционал кнопки удаления фигуры
+        deleteButton.setOnAction(actionEvent -> {
+            if(selectedShape == null) {
+                return;
+            }
+            selectedShape.setDisable(false);
+            selectedShape.setVisible(false);
+        });
 
-        // Translate the XYZ position of the shape
+        // перемещаем фигуру по значению координаты
         translateButton.setOnAction(actionEvent -> {
 
             if(selectedShape == null)
@@ -248,24 +270,26 @@ public class Main extends Application {
 
             double x, y, z;
 
-            // if there is nothing in the textfield, just default to 0, otherwise parse the text field
+            // Если с поле textfield ничего не введено, то заносим 0, иначе парсим то, что ввел пользователь
             if(translateXTextField.getText().equals(""))
                 x = 0;
-            else
+            else {
                 x = Double.parseDouble(translateXTextField.getText());
+            }
             if(translateYTextField.getText().equals(""))
                 y = 0;
-            else
+            else{
                 y = Double.parseDouble(translateYTextField.getText());
+            }
             if(translateZTextField.getText().equals(""))
                 z = 0;
-            else
+            else{
                 z = Double.parseDouble(translateZTextField.getText());
-
+            }
             translate(selectedShape, x, y, z);
         });
 
-        // Color picker to change the color of the selected shape
+        // Выбираем цвет для выбранной фигуры
         colorPicker.setOnAction(actionEvent -> {
             if(selectedShape == null)
                 return;
@@ -273,20 +297,23 @@ public class Main extends Application {
             selectedShape.setMaterial(selectedShapeMaterial);
         });
 
-        /********** primary stage set scene **********/
+
+
+        /********** Создание сцены **********/
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Shape Editor");
+        primaryStage.setTitle("Модельки 2000");
         primaryStage.show();
 
-    } /********** End of start() Method **********/
+    }
+    /********** Конец метода start() **********/
 
 
-    /***************** Opens new window with the add shape form *****************/
+    /***************** Открытие нового окна для добавления фигуры *****************/
     private void showForm() {
         Stage stage = new Stage();
 
-        // Labels & controls
+        // Метки и контроллеры
         Label label = new Label("Добавить фигуру");
         label.setStyle("-fx-font-size: 18px; -fx-font-weight: bold");
 
@@ -302,20 +329,22 @@ public class Main extends Application {
         TextField yPosition = new TextField();
         TextField zPosition = new TextField();
 
-        // For boxes only
+        // Для фигур типа "коробка"
         Label widthLabel = new Label("Ширина: ");
-        Label heightLabel = new Label("Высота: ");
+        Label heightLabel = new Label("Длина: ");
 
         TextField shapeWidth = new TextField();
         TextField shapeHeight = new TextField();
 
         // For boxes and cylinders only
-        Label depthLabel = new Label("Глубина: ");
+        Label depthLabel = new Label("Высота: ");
         TextField shapeDepth = new TextField();
 
-        // For spheres and cylinders only
+        // Для сферы и цилиндра
         Label radiusLabel = new Label("Радиус: ");
         TextField shapeRadius = new TextField();
+
+        // Для эллипса
 
         TextField[] textFields = {xPosition, yPosition, zPosition, shapeWidth, shapeHeight, shapeDepth, shapeRadius};
 
@@ -323,9 +352,9 @@ public class Main extends Application {
             setTextFieldDoubleOnly(t);
         }
 
-        // ChoiceBox with list of shapes
+        // Выбиралка с фигурами
         ChoiceBox<String> shapes = new ChoiceBox<>();
-        shapes.getItems().addAll("Сфера", "Коробка", "Цилиндр");
+        shapes.getItems().addAll("Сфера", "Коробка", "Цилиндр", "Октаэдр", "Плоскость");
 
         VBox vbox = new VBox(20, label,
                 new HBox(40, shapeLabel, shapes),
@@ -337,10 +366,11 @@ public class Main extends Application {
         vbox.setAlignment(Pos.TOP_CENTER);
 
 
-        // Shows specific scenes depending on item selected in shape ChoiceBox
+        // Тут вызываются разные сцены с полями по необходимой фигуре, которую мы выбрали ранее
         shapes.getSelectionModel().selectedIndexProperty().addListener((source, o, n) -> {
             vbox.getChildren().clear();
             if (n.equals(0)) {
+                // сфера
                 vbox.getChildren().addAll(label,
                         new HBox(40, shapeLabel, shapes),
                         new HBox(20, xLabel, xPosition),
@@ -350,6 +380,7 @@ public class Main extends Application {
                         addButton);
             }
             else if (n.equals(1)) {
+                // коробка
                 vbox.getChildren().addAll(label,
                         new HBox(40, shapeLabel, shapes),
                         new HBox(20, xLabel, xPosition),
@@ -361,6 +392,7 @@ public class Main extends Application {
                         addButton);
             }
             else if (n.equals(2)) {
+                // Цилиндр
                 vbox.getChildren().addAll(label,
                         new HBox(40, shapeLabel, shapes),
                         new HBox(20, xLabel, xPosition),
@@ -370,17 +402,39 @@ public class Main extends Application {
                         new HBox(37, heightLabel, shapeHeight),
                         addButton);
             }
+            else if (n.equals(3)){
+                // Октаэдр
+                vbox.getChildren().addAll(label,
+                        new HBox(40, shapeLabel, shapes),
+                        new HBox(20, xLabel, xPosition),
+                        new HBox(20, yLabel, yPosition),
+                        new HBox(20, zLabel, zPosition),
+                        new HBox(37, radiusLabel, shapeRadius),
+                        addButton);
+            }
+            else if (n.equals(4)) {
+                // Плоскость
+                vbox.getChildren().addAll(label,
+                        new HBox(40, shapeLabel, shapes),
+                        new HBox(20, xLabel, xPosition),
+                        new HBox(20, yLabel, yPosition),
+                        new HBox(20, zLabel, zPosition),
+                        new HBox(41, widthLabel, shapeWidth),
+                        new HBox(41, depthLabel, shapeDepth),
+                        addButton);
+            }
             vbox.setPadding(new Insets(30));
             vbox.setAlignment(Pos.TOP_CENTER);
-        });
+        }
+        );
 
-        // Submit shape details
+        // Подтверждение о добавлении выбранной фигуры
         addButton.setOnAction(e -> {
             int selectedShape = shapes.getSelectionModel().getSelectedIndex();
 
             double x,y,z;
 
-            // error handling for empty textfields
+            // Если поля пустые, то значению присваивается 0, иначе - передаются введенные координаты
             if(xPosition.getText().equals(""))
                 x = 0;
             else
@@ -394,12 +448,12 @@ public class Main extends Application {
             else
                 z = Double.parseDouble(zPosition.getText());
 
-            if (selectedShape == 0) { // Sphere
+            if (selectedShape == 0) {
+                // Сфера
                 if(shapeRadius.getText().equals("")) {
                     showFormNotCompleteAlert();
                     return;
                 }
-
                 radius = Double.parseDouble(shapeRadius.getText());
 
                 if(radius == 0) {
@@ -413,7 +467,9 @@ public class Main extends Application {
                 changeProperties(sphere);
                 stage.close();
 
-            } else if (selectedShape == 1) { // Box
+            }
+            else if (selectedShape == 1) {
+                // Коробка
                 if(shapeWidth.getText().equals("") || shapeHeight.getText().equals("") || shapeDepth.getText().equals("")) {
                     showFormNotCompleteAlert();
                     return;
@@ -431,7 +487,9 @@ public class Main extends Application {
                 changeProperties(box);
                 stage.close();
 
-            } else if (selectedShape == 2) { // Cylinder
+            }
+            else if (selectedShape == 2) {
+                // Цилиндр
                 if(shapeRadius.getText().equals("") || shapeHeight.getText().equals("")) {
                     showFormNotCompleteAlert();
                     return;
@@ -449,16 +507,55 @@ public class Main extends Application {
                 changeProperties(cylinder);
                 stage.close();
 
-            } else {
+            }
+            else if (selectedShape == 3){
+                // Октаэдр
+                if(shapeRadius.getText().equals("")) {
+                    showFormNotCompleteAlert();
+                    return;
+                }
+                radius = Double.parseDouble(shapeRadius.getText());
+
+                if(radius == 0) {
+                    showFormNotCompleteAlert();
+                    return;
+                }
+
+                Sphere sphere = new Sphere(radius, 1);
+                translate(sphere, x, y, z);
+                pane.getChildren().add(sphere);
+                changeProperties(sphere);
+                stage.close();
+            }
+            else if (selectedShape == 4) {
+                // Плоскость
+                if (shapeWidth.getText().equals("") || shapeDepth.getText().equals("")) {
+                    showFormNotCompleteAlert();
+                    return;
+                }
+                width = Double.parseDouble(shapeWidth.getText());
+                height = 0.1;
+                depth = Double.parseDouble(shapeDepth.getText());
+                if (width == 0 || height == 0 || depth == 0) {
+                    showFormNotCompleteAlert();
+                    return;
+                }
+                Box box = new Box(width, height, depth);
+                translate(box, x, y, z);
+                pane.getChildren().add(box);
+                changeProperties(box);
+                stage.close();
+            }
+
+            else {
+                // Если не выбрана ни одна фигура
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("ОШИБКА");
                 alert.setHeaderText("Не выбрана ни одна фигура");
-                alert.setContentText("ВЫБЕРИ БЛЯТЬ ФИГУРУ!!!!");
+                alert.setContentText("Выберете одну из фигур");
                 alert.show();
                 return;
             }
-
-            // set the translate textfields to empty, should the initial x, y, z, values be over or under the bounds
             translateXTextField.setText("");
             translateYTextField.setText("");
             translateZTextField.setText("");
@@ -466,7 +563,7 @@ public class Main extends Application {
 
         Scene scene = new Scene(vbox, 375, 500);
         stage.setScene(scene);
-        stage.setTitle("Add a Shape");
+        stage.setTitle("Добавить фигуру");
         stage.show();
     }
 
@@ -474,16 +571,16 @@ public class Main extends Application {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("ОЩЩЩИБКА");
         alert.setHeaderText("Введи данные");
-        alert.setContentText("Please complete the form and make sure shape properties are not left at 0.");
+        alert.setContentText("Заполните форму и убедитесь, что параметры фигуры не в 0.");
         alert.show();
     }
 
     private void changeProperties(Shape3D shape) {
 
-        /********* Select the topmost shape in the pane inside the subscene *********/
+        /********* Выбор фигуры в сцене *********/
         shape.setOnMousePressed(e -> {
 
-            // if this was selected already, unselect it
+            // Если эта фигура уже выбрана, то снять выделение
             if(shape == selectedShape) {
                 shape.setMaterial(selectedShapeMaterial);
 
@@ -494,7 +591,6 @@ public class Main extends Application {
                 return;
             }
 
-            // the previous selected shape should be changed back, should it exist
             if(selectedShape != null)
                 selectedShape.setMaterial(selectedShapeMaterial);
 
@@ -506,9 +602,8 @@ public class Main extends Application {
     }
 
     /*
-    Disable the selected shape controls of the main scene
-    Controls should be disable when no shape is selected and
-    enabled when a shape is selected.
+    Данная функция отключает боковое меню
+    Если фигура не выбрана, то меню не активно, иначе - активно
      */
     private void disableControls(boolean b) {
         rotateSliderX.setDisable(b);
@@ -519,35 +614,32 @@ public class Main extends Application {
         translateYTextField.setDisable(b);
         translateZTextField.setDisable(b);
         translateButton.setDisable(b);
+        deleteButton.setDisable(b);
         colorPicker.setDisable(b);
-
     }
 
-    /*
-    Moves the shape according to the corresponding x, y, z coordinates.
-    Won't move the shape outside of the bounds, the subscene width and height,
-    according to the center of the shape.
-    of the shape. TODO find how to make it stay inside the edge according to opposite edge of the shape
-                  TODO moving by z makes it visible beyond width and height
-     */
+
     private void translate(Shape3D shape, double x, double y, double z) {
 
-        // if moving the shape would make it go out of bounds, then don't move in that direction,
-        // or only move until at the edge
+        // Если фигура выходит за границу, то он доходит до края сцены и прекращает перемещение
         if((shape.getTranslateX() + x) > subSceneWidth) {
             x = subSceneWidth - shape.getTranslateX();
             translateXTextField.setText(Double.toString(x));
+
         } else if ((shape.getTranslateX() + x) < 0 ) {
             x = -(shape.getTranslateX());
             translateXTextField.setText(Double.toString(x));
         }
+
         if((shape.getTranslateY() + y) > subSceneHeight) {
             y = subSceneHeight - shape.getTranslateY();
             translateYTextField.setText(Double.toString(y));
+
         } else if((shape.getTranslateY() + y) < 0) {
             y = -(shape.getTranslateY());
             translateYTextField.setText(Double.toString(y));
         }
+
         if((shape.getTranslateZ() + z) < 0) {
             z = -(shape.getTranslateZ());
             translateZTextField.setText(Double.toString(z));
@@ -558,60 +650,19 @@ public class Main extends Application {
         shape.setTranslateZ(shape.getTranslateZ() + z);
     }
 
+    // Функция для изменения масштаба фигуры,
+    // где factor - значение ползунка насколько надо изменить размер фигуры
     private void scale(Shape3D shape, double factor) {
         shape.setScaleX(shape.getScaleX() + factor);
         shape.setScaleY(shape.getScaleY() + factor);
         shape.setScaleZ(shape.getScaleZ() + factor);
     }
 
-    public void save(Stage stage)
-    {
-        FileChooser fc = new FileChooser();
-        File myFile = fc.showSaveDialog(stage);
+    // Функция для сохранения файла - такого не будет
+    public void save() {}
 
-        try {
-            PrintWriter printWriter = new PrintWriter(myFile);
-            for(int i=0; i<shapeList.length; ++i) {
-                printWriter.append(printShapeData(shapeList[i]) + "\n");
-            }
-            printWriter.close();
-        }
-        catch (FileNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Error Creating File!");
-            alert.setContentText("Please fix the error.");
-            alert.show();
-        }
-    }
-
-    public void load(Stage stage)
-    {
-        FileChooser FC = null;
-        try
-        {
-            FC = new FileChooser();
-            File saveFile = FC.showOpenDialog(stage);
-
-            FC.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-
-            Scanner reader = new Scanner(saveFile);
-            String line;
-            while(reader.hasNext())
-            {
-                line = reader.nextLine();
-                System.out.println(line);
-            }
-
-        }
-        catch(NullPointerException NPE)
-        {
-            System.out.println("Load File Aborted");
-        }
-        catch (FileNotFoundException e)
-        {
-            System.out.println("File Not Found");
-        }
-    }
+    // Функция для загрузки файла - это не работает)
+    public void load() {}
 
     public String printShapeData(Shape3D shape)
     {
@@ -672,15 +723,7 @@ public class Main extends Application {
         return hex2;
     }
 
-    /*
-    Set the passed in text field to only contain a double as x.y
-    where x is a 4 digit number, and y is a 2 digit number.
-    With regards to setting the x, y, z position, the translate
-    will be forced to be within the bounds of the subscene.
-    See method:
-        translate(Shape3D shape, double x, double y, double z)
-    for more information.
-     */
+    // Правила для заполнения поля для ввода данных
     private void setTextFieldDoubleOnly(TextField textField){
         final Pattern validDoubleText = Pattern.compile("\\-?\\d{0,3}([\\.]\\d{0,2})?");
         textField.setTextFormatter(new TextFormatter<Double>(new DoubleStringConverter(), 0.0,
