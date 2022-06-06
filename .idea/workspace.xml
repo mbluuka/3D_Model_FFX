@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/cs2450-hw4/sample/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/cs2450-hw4/sample/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/diplom/sample/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/diplom/sample/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -187,8 +187,8 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Jasmine\Desktop\cs2450-hw4\src\sample" />
-      <recent name="C:\Users\Jasmine\Desktop\cs2450-hw4" />
+      <recent name="C:\Users\Jasmine\Desktop\diplom\src\sample" />
+      <recent name="C:\Users\Jasmine\Desktop\diplom" />
     </key>
   </component>
   <component name="RunManager">
@@ -212,7 +212,7 @@
     </configuration>
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="sample.Main" />
-      <module name="cs2450-hw4" />
+      <module name="diplom" />
       <option name="VM_PARAMETERS" value="--module-path E:\Помощь\2\javafx-sdk-17.0.2\lib --add-modules javafx.controls,javafx.fxml" />
       <extension name="coverage">
         <pattern>
@@ -464,7 +464,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>cs2450-hw4</last-edited>
+          <last-edited>diplom</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
